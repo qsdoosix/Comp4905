@@ -728,9 +728,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f6636009a1fc7144854ba8e7dcec8be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InputAnimation: {fileID: 7400000, guid: 1467608ff8bae154885e19df2e746425, type: 2}
   output: {fileID: 1995994841}
   HeightSlider: {fileID: 360938863}
+  InputAnimation: {fileID: 7400000, guid: 1467608ff8bae154885e19df2e746425, type: 2}
 --- !u!1 &1577986172
 GameObject:
   m_ObjectHideFlags: 0
