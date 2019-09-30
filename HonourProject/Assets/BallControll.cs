@@ -70,10 +70,12 @@ public class BallControll : MonoBehaviour
             WeightedMode = keyframe.weightedMode;
         }
 
-        public Keyframe toKeyframe()
+        public Keyframe ToKeyframe()
         {
-            Keyframe k = new Keyframe(Time, Value, InTangent, OutTangent, InWeight, OutWeight);
-            k.weightedMode = WeightedMode;
+            Keyframe k = new Keyframe(Time, Value, InTangent, OutTangent, InWeight, OutWeight)
+            {
+                weightedMode = WeightedMode
+            };
             return k;
         }
     }
@@ -224,8 +226,10 @@ public class BallControll : MonoBehaviour
                                                 inTangent,//in tangent
                                                 outTangent,//out tangent
                                                 inWeight,//in weight
-                                                outWeight);//out weight
-                keyframedata[counter][i - 3].weightedMode = PraseWeightmode(filekeyframeData[4]);
+                                                outWeight)
+                {
+                    weightedMode = PraseWeightmode(filekeyframeData[4])
+                };//out weight
                 keyframeValues[counter][i - 3] = keyframedata[counter][i - 3].value;
             }
             counter++;
@@ -353,7 +357,7 @@ public class BallControll : MonoBehaviour
             for(int a = 0;a< ListOfCurves[i].Key.Count; a++)
             {
                 keyframeValues[i][a] = ListOfCurves[i].Key[a].Value;
-                keyframedata[i][a] = ListOfCurves[i].Key[a].toKeyframe();
+                keyframedata[i][a] = ListOfCurves[i].Key[a].ToKeyframe();
             }
         }
     }
@@ -362,7 +366,7 @@ public class BallControll : MonoBehaviour
     {
         if (Application.isEditor)
         {
-            DisplayAnimationCurveData();
+          //  DisplayAnimationCurveData();
         }
     }
 }
