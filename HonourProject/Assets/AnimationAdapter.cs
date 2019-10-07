@@ -74,6 +74,13 @@ public class AnimationAdapter : MonoBehaviour
         }
     }
 
+    public int GetAnimationCurveIndex(int clipIndex, string curvename, string relativepath)
+    {
+        //Search the property name at relative path in given Animation data
+        //Returns -1 if not found.
+        return AnimationDatas[clipIndex].GetCurveIDbyName(curvename,relativepath);
+    }
+
     public void BindAdaptionFunction(int ClipID,int curveIndex, int keyFrameIndex, Func<Keyframe, Keyframe> func)
     {
         AnimationDatas[ClipID].SetAnimationAdaptionFunction(curveIndex, keyFrameIndex, func);

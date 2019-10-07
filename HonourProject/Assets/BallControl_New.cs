@@ -12,7 +12,6 @@ public class BallControl_New : MonoBehaviour
     AnimationAdapter Adapter;
     int BallAnimationID;
 
-
     Animator anim;
     AnimatorOverrideController animOverride;
 
@@ -25,6 +24,8 @@ public class BallControl_New : MonoBehaviour
         //Bind adaption function to the adapter
         Adapter.BindAdaptionFunction(BallAnimationID, 0, 0, BounceHeightAdaption);
         Adapter.BindAdaptionFunction(BallAnimationID, 0, 2, BounceHeightAdaption);
+        Adapter.BindAdaptionFunction(BallAnimationID, 3, 0, RotationAdaption);
+        Adapter.BindAdaptionFunction(BallAnimationID, 3, 1, RotationAdaption);
         HeightSlider.onValueChanged.AddListener(delegate { SliderHandle(); });
         anim = gameObject.GetComponent<Animator>();
         animOverride = new AnimatorOverrideController(anim.runtimeAnimatorController);
@@ -40,6 +41,15 @@ public class BallControl_New : MonoBehaviour
     Keyframe BounceHeightAdaption(Keyframe key)
     {
         key.value += HeightSlider.value;
+        return key;
+    }
+
+    Keyframe RotationAdaption(Keyframe key)
+    {
+        int modifier = Mathf.RoundToInt(HeightSlider.value * 2)-1;
+        key.value = key.value * modifier;
+        key.inTangent = key.inTangent * modifier;
+        key.outTangent = key.outTangent * modifier;
         return key;
     }
 }

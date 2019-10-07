@@ -76,6 +76,8 @@ public class AnimationData
             return k;
         }
     }
+
+
     //The name of this animation, like attack, move, jump, etc.
     //Data encapsulation
     private string[] _RelativePath;
@@ -128,6 +130,18 @@ public class AnimationData
         {
             Debug.LogError("Can't create data outside Editor");
         }
+    }
+
+    internal int GetCurveIDbyName(string curvename, string relativepath)
+    {
+        for (int i = 0; i < _PropertyName.Length; i++)
+        {
+            if (_PropertyName[i].Equals(curvename) && _RelativePath[i].Equals(relativepath))
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public string GetName()
@@ -183,7 +197,7 @@ public class AnimationData
     public void SaveToFile(string path)
     {
         path = Path.Combine(path, (Data.AnimationName + ".dat"));
-        Data.ListOfCurves.Clear();//Clean the existing data
+        Data.ListOfCurves = new List<CurveInfo>();
         for (int i = 0; i < _RelativePath.Length; i++)
         {
             Data.ListOfCurves.Add(new CurveInfo(_RelativePath[i], _PropertyName[i], _Keyframedata[i]));
@@ -314,9 +328,7 @@ public class AnimationData
             {
                 if(AdaptFunctions[a][b] != null)
                 {
-                    Debug.Log("Key before:" + _Keyframedata[a][b].value);
                     _Keyframedata[a][b] = AdaptFunctions[a][b](KeyframeValues[a][b]);
-                    Debug.Log("Key after:" + _Keyframedata[a][b].value);
                 }
             }
         }
