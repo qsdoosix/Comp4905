@@ -112,7 +112,7 @@ public class AnimationData
         }
     }
 
-    private Func<Keyframe, Keyframe>[][] AdaptFunctions;
+    private Func<Keyframe,GameObject, Keyframe>[][] AdaptFunctions;
     private AnimationInfo Data;
     public float TimeModifier;
 
@@ -309,10 +309,10 @@ public class AnimationData
     private void InitializeFunctionArray()
     {
         //Will be called after loading the animation
-        AdaptFunctions = new Func<Keyframe, Keyframe>[_Keyframedata.Length][];
+        AdaptFunctions = new Func<Keyframe,GameObject, Keyframe>[_Keyframedata.Length][];
         for(int i = 0; i < AdaptFunctions.Length; i++)
         {
-            AdaptFunctions[i] = new Func<Keyframe, Keyframe>[_Keyframedata[i].Length];
+            AdaptFunctions[i] = new Func<Keyframe, GameObject, Keyframe>[_Keyframedata[i].Length];
             for(int a = 0;a< AdaptFunctions[i].Length; a++)
             {
                 AdaptFunctions[i][a] = null;
@@ -320,7 +320,7 @@ public class AnimationData
         }
     }
 
-    public void UpdateAnimationAdaption()
+    public void UpdateAnimationAdaption(GameObject obj)
     {
         for (int a = 0; a < AdaptFunctions.Length; a++)
         {
@@ -328,14 +328,14 @@ public class AnimationData
             {
                 if(AdaptFunctions[a][b] != null)
                 {
-                    _Keyframedata[a][b] = AdaptFunctions[a][b](KeyframeValues[a][b]);
+                    _Keyframedata[a][b] = AdaptFunctions[a][b](KeyframeValues[a][b],obj);
                 }
             }
         }
-        DisplayAnimationCurveData();
+        //DisplayAnimationCurveData();
     }
 
-    public void SetAnimationAdaptionFunction(int a,int b, Func<Keyframe, Keyframe> func)
+    public void SetAnimationAdaptionFunction(int a,int b, Func<Keyframe,GameObject, Keyframe> func)
     {
         AdaptFunctions[a][b] = func;
     }

@@ -61,6 +61,15 @@ public class AnimationAdapter : MonoBehaviour
          * Return: The index of that animation clip in the manager
          * Error: Return negative number
          */
+        
+        //Avoid dumplicated clip
+        //Also can be used when loading the clip from file instead of Unity Editor
+        int t = SearchClipName(Aname);
+        if (t >= 0)
+        {
+            return t;
+        }
+
         if (Application.isEditor)
         {
             AnimationData data = new AnimationData(input,Aname);
@@ -74,6 +83,21 @@ public class AnimationAdapter : MonoBehaviour
         }
     }
 
+    public int SearchClipName(string Name)
+    {
+        // Search for clip index by name
+        // Return -1 if not found
+        int result = -1;
+        for(int i =0;i< AnimationDatas.Count; i++)
+        {
+            if (AnimationDatas[i].GetName().CompareTo(Name) == 0)
+            {
+                result = i;
+            }
+        }
+        return result;
+    }
+
     public int GetAnimationCurveIndex(int clipIndex, string curvename, string relativepath)
     {
         //Search the property name at relative path in given Animation data
@@ -81,14 +105,14 @@ public class AnimationAdapter : MonoBehaviour
         return AnimationDatas[clipIndex].GetCurveIDbyName(curvename,relativepath);
     }
 
-    public void BindAdaptionFunction(int ClipID,int curveIndex, int keyFrameIndex, Func<Keyframe, Keyframe> func)
+    public void BindAdaptionFunction(int ClipID,int curveIndex, int keyFrameIndex, Func<Keyframe,GameObject, Keyframe> func)
     {
         AnimationDatas[ClipID].SetAnimationAdaptionFunction(curveIndex, keyFrameIndex, func);
     }
 
     public AnimationClip UpdateAdaptionFunction(int ClipID,GameObject obj)
     {
-        AnimationDatas[ClipID].UpdateAnimationAdaption();
+        AnimationDatas[ClipID].UpdateAnimationAdaption(obj);
         return AnimationDatas[ClipID].OverrideAnimation(obj);
     }
 

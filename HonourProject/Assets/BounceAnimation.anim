@@ -361,7 +361,7 @@ AnimationClip:
         value: 0
         inSlope: 0
         outSlope: 127.05883
-        tangentMode: 65
+        tangentMode: 69
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
