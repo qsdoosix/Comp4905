@@ -116,6 +116,13 @@ public class AnimationAdapter : MonoBehaviour
         return AnimationDatas[ClipID].OverrideAnimation(obj);
     }
 
+    public AnimationClip UpdateAdaptionFunction(int ClipID,float Timemodifier, GameObject obj)
+    {
+        AnimationDatas[ClipID].UpdateAnimationAdaption(obj);
+        AnimationDatas[ClipID].RescaleAnimationTime(Timemodifier);
+        return AnimationDatas[ClipID].OverrideAnimation(obj);
+    }
+
     public void SaveData()
     {
         using (StreamWriter sw = File.CreateText(Path.Combine(filepath, "FileList.txt")))
@@ -126,5 +133,9 @@ public class AnimationAdapter : MonoBehaviour
                 sw.WriteLine(data.GetName() + ".dat");
             }
         }
+    }
+    public string GetAnimationData(int ClipID)
+    {
+        return AnimationDatas[ClipID].GetAnimationCurveData();
     }
  }

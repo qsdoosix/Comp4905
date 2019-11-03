@@ -332,14 +332,13 @@ public class AnimationData
                 }
             }
         }
-        //DisplayAnimationCurveData();
     }
 
     public void SetAnimationAdaptionFunction(int a,int b, Func<Keyframe,GameObject, Keyframe> func)
     {
         AdaptFunctions[a][b] = func;
     }
-    void DisplayAnimationCurveData()
+    public string GetAnimationCurveData()
     {
         string outputtext = "";
         for (int i = 0; i < PropertyName.Length; i++)
@@ -354,7 +353,6 @@ public class AnimationData
             }
             outputtext += s + "\n";
         }
-        Text output = GameObject.FindObjectOfType<Text>();
-        output.text = outputtext;
+        return outputtext;
     }
 }
