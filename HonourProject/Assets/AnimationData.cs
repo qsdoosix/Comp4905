@@ -116,6 +116,11 @@ public class AnimationData
     private AnimationInfo Data;
     public float TimeModifier;
 
+    public AnimationData(string Aname)
+    {
+        Data = new AnimationInfo(Aname);
+        TimeModifier = 1.0f;
+    }
 
     public AnimationData(AnimationClip data,string Aname)
     {
@@ -131,19 +136,6 @@ public class AnimationData
             Debug.LogError("Can't create data outside Editor");
         }
     }
-
-    internal int GetCurveIDbyName(string curvename, string relativepath)
-    {
-        for (int i = 0; i < _PropertyName.Length; i++)
-        {
-            if (_PropertyName[i].Equals(curvename) && _RelativePath[i].Equals(relativepath))
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     public string GetName()
     {
         return Data.AnimationName;
@@ -233,7 +225,7 @@ public class AnimationData
                 Array.Copy(Keyframedata[i], temp, Keyframedata[i].Length);
                 for (int a = 0; a < temp.Length; a++)
                 {
-                    temp[i].time *= TimeModifier;
+                    temp[a].time *= TimeModifier;
                 }
                 newCurve = new AnimationCurve(temp);
             }
@@ -349,7 +341,7 @@ public class AnimationData
             for (int a = 0; a < Keyframedata[i].Length; a++)
             {
                 //Output the value of keyframe for testing
-                s += Keyframedata[i][a].value + ", ";
+                s += "("+Keyframedata[i][a].value + ", "+ Keyframedata[i][a].time+")";
             }
             outputtext += s + "\n";
         }

@@ -14,7 +14,7 @@ public class AnimationAdapter : MonoBehaviour
 {
     List<AnimationData> AnimationDatas = new List<AnimationData>();
     public string filepath;
-
+    Boolean LoadFromFile = true;
     private static AnimationAdapter _instance;
     public static AnimationAdapter Instance
     {
@@ -41,17 +41,32 @@ public class AnimationAdapter : MonoBehaviour
         }
         _instance = this;
         filepath = Application.persistentDataPath;
+        ReadFileList();
         DontDestroyOnLoad(gameObject);
     }
 
     public void Start(){
-        if (File.Exists(Path.Combine(filepath, "FileList.txt")))
+    }
+
+    void ReadFileList()
+    {
+        if (LoadFromFile)
         {
-            //Load from the file
-        }
-        else
-        {
-            //Do nothing because the there is no file.
+            if (File.Exists(Path.Combine(filepath, "FileList.txt")))
+            {
+                //The file exists and can be loaded
+                StreamReader file = File.OpenText(Path.Combine(filepath, "FileList.txt"));
+                string s = file.ReadLine();
+                while (s != null)
+                {
+                    AnimationData data = new AnimationData(s.Replace(".dat", ""));
+                    data.LoadFromFile(filepath);
+                    AnimationDatas.Add(data);
+                    s = file.ReadLine();
+                    Debug.Log(data.GetAnimationCurveData());
+                }
+                file.Close();
+            }
         }
     }
 
@@ -61,12 +76,14 @@ public class AnimationAdapter : MonoBehaviour
          * Return: The index of that animation clip in the manager
          * Error: Return negative number
          */
-        
+
         //Avoid dumplicated clip
         //Also can be used when loading the clip from file instead of Unity Editor
+        Debug.Log("Adding animation " + Aname);
         int t = SearchClipName(Aname);
         if (t >= 0)
         {
+            Debug.Log("Found existing animation named \"" + Aname + "\" at index: " + t);
             return t;
         }
 
@@ -96,13 +113,6 @@ public class AnimationAdapter : MonoBehaviour
             }
         }
         return result;
-    }
-
-    public int GetAnimationCurveIndex(int clipIndex, string curvename, string relativepath)
-    {
-        //Search the property name at relative path in given Animation data
-        //Returns -1 if not found.
-        return AnimationDatas[clipIndex].GetCurveIDbyName(curvename,relativepath);
     }
 
     public void BindAdaptionFunction(int ClipID,int curveIndex, int keyFrameIndex, Func<Keyframe,GameObject, Keyframe> func)
