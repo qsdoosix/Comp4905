@@ -95,6 +95,8 @@ public class AnimationData
             return _PropertyName;
         }
     }
+    //Keyframevalues is a copy of original data and should never be changed after created. 
+    //The modified data should be stored in Keyframedata
     private Keyframe[][] _Keyframedata;
     public Keyframe[][] Keyframedata
     {
@@ -111,7 +113,6 @@ public class AnimationData
             return _KeyframeValues;
         }
     }
-
     private Func<Keyframe,GameObject, Keyframe>[][] AdaptFunctions;
     private AnimationInfo Data;
     public float TimeModifier;
@@ -128,7 +129,9 @@ public class AnimationData
         TimeModifier = 1.0f;
         if (Application.isEditor)
         {
+#if UNITY_EDITOR
             LoadAnimationFromEditor(data);
+#endif
             Data = new AnimationInfo(Aname);
         }
         else
@@ -186,16 +189,19 @@ public class AnimationData
         }
         InitializeFunctionArray();
     }
+
     public void SaveToFile(string path)
     {
+        //The file path to store the animation data.
         path = Path.Combine(path, (Data.AnimationName + ".dat"));
+        //Store all the data about the keyframe and curves into the serializable data structure
         Data.ListOfCurves = new List<CurveInfo>();
         for (int i = 0; i < _RelativePath.Length; i++)
         {
             Data.ListOfCurves.Add(new CurveInfo(_RelativePath[i], _PropertyName[i], _Keyframedata[i]));
         }
+        //Create the file and write the data
         FileStream fileStream = new FileStream(path, FileMode.Create);
-
         BinaryFormatter formatter = new BinaryFormatter();
         try
         {
@@ -215,7 +221,7 @@ public class AnimationData
     {
         AnimationClip Animation_Copy;
         Animation_Copy = new AnimationClip();
-        AnimatorOverrideController animOverride = new AnimatorOverrideController(target.GetComponent<Animator>().runtimeAnimatorController);
+        Animation_Copy.legacy = true;
         for (int i = 0; i < Keyframedata.Length; i++)
         {
             AnimationCurve newCurve;
@@ -260,6 +266,7 @@ public class AnimationData
         }
     }
 
+#if UNITY_EDITOR
     public void LoadAnimationFromEditor(AnimationClip InputAnimation)
     {
         if (!Application.isEditor)
@@ -298,6 +305,7 @@ public class AnimationData
         InitializeFunctionArray();
     }
 
+#endif
     private void InitializeFunctionArray()
     {
         //Will be called after loading the animation

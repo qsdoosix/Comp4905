@@ -12,8 +12,7 @@ public class BallControl_New : MonoBehaviour
     AnimationAdapter Adapter;
     int BallAnimationID;
 
-    Animator anim;
-    AnimatorOverrideController animOverride;
+    Animation anim;
 
     void Start()
     {
@@ -21,29 +20,31 @@ public class BallControl_New : MonoBehaviour
         Adapter = AnimationAdapter.Instance;
         //Add animation into animation adapter
         BallAnimationID = Adapter.AddData(InputAnimation, InputAnimation.name);
-        Debug.Log("Ball:" + gameObject.name + ", AID:" + BallAnimationID);
         //Bind adaption function to the adapter
+        Debug.Log("Ball: " + gameObject.name + " has Animation ID " + BallAnimationID);
         Adapter.BindAdaptionFunction(BallAnimationID, 0, 0, BounceHeightAdaption);
         Adapter.BindAdaptionFunction(BallAnimationID, 0, 2, BounceHeightAdaption);
         Adapter.BindAdaptionFunction(BallAnimationID, 3, 0, RotationAdaption);
         Adapter.BindAdaptionFunction(BallAnimationID, 3, 1, RotationAdaption);
         HeightSlider.onValueChanged.AddListener(delegate { SliderHandle(); });
-        anim = gameObject.GetComponent<Animator>();
-        animOverride = new AnimatorOverrideController(anim.runtimeAnimatorController);
+        anim = gameObject.GetComponent<Animation>();
+        anim.AddClip(InputAnimation, "BounceAnimation");
+        anim.Play("BounceAnimation");
         Adapter.SaveData();
     }
 
     void SliderHandle()
     {
-        anim.runtimeAnimatorController = animOverride;
-        animOverride["BounceAnimation"] = Adapter.UpdateAdaptionFunction(BallAnimationID,gameObject);
+        anim.RemoveClip("BounceAnimation");
+        anim.AddClip(Adapter.UpdateAdaptionFunction(BallAnimationID, gameObject, 1 + (HeightSlider.value * 0.1f)), "BounceAnimation");
+        anim.Play("BounceAnimation");
+        anim.wrapMode = WrapMode.Loop;
     }
 
     Keyframe BounceHeightAdaption(Keyframe key,GameObject obj)
     {
         Slider HeightSlider = obj.GetComponent<BallControl_New>().HeightSlider;
         key.value += HeightSlider.value;
-        key.time *= 1 + (HeightSlider.value * 0.1f);
         return key;
     }
 

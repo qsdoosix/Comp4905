@@ -10,8 +10,7 @@ public class InteractiveBall : MonoBehaviour
     public AnimationClip InputAnimation;
     AnimationAdapter Adapter;
     int AnimationID;
-    Animator anim;
-    AnimatorOverrideController animOverride;
+    Animation anim;
     float MousePoint=0.0f;
     // Start is called before the first frame update
     void Start()
@@ -20,8 +19,7 @@ public class InteractiveBall : MonoBehaviour
         Adapter = AnimationAdapter.Instance;
         //Add animation into animation adapter
         AnimationID = Adapter.AddData(InputAnimation, InputAnimation.name);
-        anim = gameObject.GetComponent<Animator>();
-        animOverride = new AnimatorOverrideController(anim.runtimeAnimatorController);
+        anim = gameObject.GetComponent<Animation>();
         Adapter.BindAdaptionFunction(AnimationID, 0, 0, SetJumpHeight);
         Adapter.BindAdaptionFunction(AnimationID, 0, 1, SetLowPoint);
         Adapter.BindAdaptionFunction(AnimationID, 0, 2, SetJumpHeight);
@@ -36,9 +34,11 @@ public class InteractiveBall : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             Debug.Log("mouseClicked");
-            MousePoint= Camera.main.ScreenToWorldPoint(Input.mousePosition).y + 4;
-            anim.runtimeAnimatorController = animOverride;
-            animOverride["interactiveBouncing"] = Adapter.UpdateAdaptionFunction(AnimationID, ScaleTimeOnHeight(), gameObject);
+            MousePoint = Camera.main.ScreenToWorldPoint(Input.mousePosition).y + 4;
+            anim.RemoveClip("interactiveBouncing");
+            anim.AddClip(Adapter.UpdateAdaptionFunction(AnimationID, gameObject,MousePoint/4), "interactiveBouncing");
+            anim.Play("interactiveBouncing");
+            anim.wrapMode = WrapMode.Loop;
             textfield.text = Adapter.GetAnimationData(AnimationID);
         }
     }

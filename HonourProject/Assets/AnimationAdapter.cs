@@ -14,7 +14,7 @@ public class AnimationAdapter : MonoBehaviour
 {
     List<AnimationData> AnimationDatas = new List<AnimationData>();
     public string filepath;
-    Boolean LoadFromFile = true;
+    Boolean LoadFromFile = !Application.isEditor;
     private static AnimationAdapter _instance;
     public static AnimationAdapter Instance
     {
@@ -41,14 +41,13 @@ public class AnimationAdapter : MonoBehaviour
         }
         _instance = this;
         filepath = Application.persistentDataPath;
-        ReadFileList();
         DontDestroyOnLoad(gameObject);
     }
 
     public void Start(){
     }
 
-    void ReadFileList()
+    public void ReadFileList()
     {
         if (LoadFromFile)
         {
@@ -76,7 +75,6 @@ public class AnimationAdapter : MonoBehaviour
          * Return: The index of that animation clip in the manager
          * Error: Return negative number
          */
-
         //Avoid dumplicated clip
         //Also can be used when loading the clip from file instead of Unity Editor
         Debug.Log("Adding animation " + Aname);
@@ -86,8 +84,7 @@ public class AnimationAdapter : MonoBehaviour
             Debug.Log("Found existing animation named \"" + Aname + "\" at index: " + t);
             return t;
         }
-
-        if (Application.isEditor)
+        else if (Application.isEditor)
         {
             AnimationData data = new AnimationData(input,Aname);
             AnimationDatas.Add(data);
@@ -126,7 +123,7 @@ public class AnimationAdapter : MonoBehaviour
         return AnimationDatas[ClipID].OverrideAnimation(obj);
     }
 
-    public AnimationClip UpdateAdaptionFunction(int ClipID,float Timemodifier, GameObject obj)
+    public AnimationClip UpdateAdaptionFunction(int ClipID, GameObject obj, float Timemodifier=1.0f)
     {
         AnimationDatas[ClipID].UpdateAnimationAdaption(obj);
         AnimationDatas[ClipID].RescaleAnimationTime(Timemodifier);
@@ -135,6 +132,10 @@ public class AnimationAdapter : MonoBehaviour
 
     public void SaveData()
     {
+        if (!Application.isEditor)
+        {
+            return;
+        }
         using (StreamWriter sw = File.CreateText(Path.Combine(filepath, "FileList.txt")))
         {
             foreach (AnimationData data in AnimationDatas)
